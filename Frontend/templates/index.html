@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GymFit Tracker</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div id="loader" class="loader-overlay"><div class="loader"></div></div>
+    <!-- Role Selection Screen -->
+    <div id="roleScreen" class="screen active">
+      <div class="role-background"></div>
+      <div class="role-container">
+        <div class="role-card glass">
+          <div class="role-header">
+            <h1>GymFit Tracker</h1>
+            <p>Select your role to continue</p>
+          </div>
+          <div class="role-options">
+            <div class="role-option" data-role="member">
+              <div class="role-icon">👤</div>
+              <h3>Member</h3>
+              <p>Track your fitness journey</p>
+            </div>
+            <div class="role-option" data-role="trainer">
+              <div class="role-icon">💪</div>
+              <h3>Trainer</h3>
+              <p>Manage clients & sessions</p>
+            </div>
+            <div class="role-option" data-role="admin">
+              <div class="role-icon">👑</div>
+              <h3>Admin</h3>
+              <p>System management</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen">
+      <div class="login-background"></div>
+      <div class="login-container">
+        <div class="login-card glass">
+          <div class="login-header">
+            <h1 id="loginRoleTitle">Member Login</h1>
+            <p id="loginRoleSubtitle">Enter your credentials</p>
+          </div>
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                required
+                placeholder="your@email.com"
+              />
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                required
+                placeholder="********"
+              />
+            </div>
+            <button type="submit" class="btn-primary">Sign In</button>
+          </form>
+          <div id="loginError" class="error-message"></div>
+          <button id="backToRole" class="back-btn">
+            ← Back to role selection
+          </button>
+          <div id="demoCredentials" class="demo-credentials"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Member Dashboard -->
+    <div id="memberDashboard" class="screen">
+      <nav class="navbar glass">
+        <div class="nav-brand">
+          <h2>GymFit</h2>
+        </div>
+        <div class="nav-user">
+          <div class="notification-bell">
+            <span id="notificationIcon">🔔</span>
+            <span
+              id="memberNotificationBadge"
+              class="notification-badge"
+              style="display: none"
+            ></span>
+          </div>
+          <span id="userName">Hello, Member</span>
+          <button id="memberLogoutBtn" class="btn-secondary">Logout</button>
+        </div>
+      </nav>
+      <div class="dashboard-container">
+        <div class="stats-grid">
+          <div class="stat-card glass">
+            <span>😴</span>
+            <div>
+              <span id="sleepHours">0</span>
+              <p>Sleep (Hours)</p>
+            </div>
+          </div>
+          <div class="stat-card glass">
+            <span>💧</span>
+            <div>
+              <span id="waterLiters">0</span>
+              <p>Water (Liters)</p>
+            </div>
+          </div>
+          <div class="stat-card glass">
+            <span>👟</span>
+            <div>
+              <span id="walkingSteps">0</span>
+              <p>Today's Steps</p>
+            </div>
+          </div>
+        </div>
+        <div class="main-grid">
+          <div class="profile-card section-container glass">
+            <h3 id="memberName">Member Name</h3>
+            <p id="memberEmail">member@email.com</p>
+            <div class="profile-stats">
+              <span id="memberAge">Age 25</span>
+              <span id="memberHeight">Height 165 cm</span>
+              <span id="memberWeight">Weight 55 kg</span>
+            </div>
+          </div>
+          <div class="workouts-card section-container glass">
+            <div class="section-header">
+              <h2>Recent Workouts</h2>
+              <button id="addWorkoutBtn" class="btn-primary">
+                + Add Workout
+              </button>
+            </div>
+            <div id="recentWorkoutsList" class="item-list"></div>
+          </div>
+          <div class="sessions-card section-container glass">
+            <div class="section-header">
+              <h2>Upcoming Sessions</h2>
+              <button id="bookSessionBtn" class="btn-primary">
+                Book Session
+              </button>
+            </div>
+            <!-- Add this in the Member Dashboard, after the sessions-card -->
+            <div class="ai-assistant-card section-container glass">
+              <div class="section-header">
+                <h2>🤖 AI Assistant</h2>
+                <button id="openChatbotBtn" class="btn-primary">
+                  Chat Now
+                </button>
+              </div>
+              <p style="color: var(--text-secondary); font-size: 14px">
+                Get personalized insights and recommendations based on your
+                fitness data. Available exclusively for Gold members!
+              </p>
+            </div>
+            <div id="upcomingSessionsList" class="item-list"></div>
+          </div>
+          <div class="recommendations-card section-container glass">
+            <div class="section-header">
+              <h2>AI Recommendations</h2>
+            </div>
+            <div id="recommendationsList" class="item-list"></div>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-container glass">
+            <h3>Workout Frequency</h3>
+            <canvas id="workoutFrequencyChart"></canvas>
+          </div>
+          <div class="chart-container glass">
+            <h3>Weight Progress</h3>
+            <canvas id="weightProgressChart"></canvas>
+          </div>
+          <div class="chart-container glass">
+            <h3>Calorie Trend</h3>
+            <canvas id="calorieTrendChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trainer Dashboard -->
+    <div id="trainerDashboard" class="screen">
+      <nav class="navbar glass">
+        <div class="nav-brand">
+          <h2>GymFit</h2>
+        </div>
+        <div class="nav-user">
+          <div class="notification-bell">
+            <span id="notificationIcon">🔔</span>
+            <span
+              id="trainerNotificationBadge"
+              class="notification-badge"
+              style="display: none"
+            ></span>
+          </div>
+          <span id="trainerName">Hello, Trainer</span>
+          <button id="trainerLogoutBtn" class="btn-secondary">Logout</button>
+        </div>
+      </nav>
+      <div class="dashboard-container">
+        <div class="stats-grid">
+          <div class="stat-card glass">
+            <span>👥</span>
+            <div>
+              <span id="totalClients">0</span>
+              <p>Total Clients</p>
+            </div>
+          </div>
+          <div class="stat-card glass">
+            <span>📅</span>
+            <div>
+              <span id="todaySessions">0</span>
+              <p>Today's Sessions</p>
+            </div>
+          </div>
+        </div>
+        <div class="main-grid">
+          <div class="sessions-card section-container glass">
+            <div class="section-header">
+              <h2>My Sessions</h2>
+              <button
+                class="btn-primary"
+                onclick="showNotification('This feature is coming soon!')"
+              >
+                + Add Session
+              </button>
+            </div>
+            <div id="trainerSessionsList" class="item-list"></div>
+          </div>
+          <div class="clients-card section-container glass">
+            <div class="section-header">
+              <h2>My Clients</h2>
+            </div>
+            <div id="trainerClientsList" class="item-list client-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="screen">
+      <nav class="navbar glass">
+        <div class="nav-brand">
+          <h2>GymFit</h2>
+        </div>
+        <div class="nav-user">
+          <div class="notification-bell">
+            <span id="notificationIcon">🔔</span>
+            <span
+              id="adminNotificationBadge"
+              class="notification-badge"
+              style="display: none"
+            ></span>
+          </div>
+          <span id="adminName">Hello, Admin</span>
+          <button id="adminLogoutBtn" class="btn-secondary">Logout</button>
+        </div>
+      </nav>
+      <div class="dashboard-container">
+        <div class="stats-grid">
+          <div class="stat-card glass">
+            <span>👤</span>
+            <div>
+              <span id="totalMembers">0</span>
+              <p>Total Members</p>
+            </div>
+          </div>
+          <div class="stat-card glass">
+            <span>💪</span>
+            <div>
+              <span id="totalTrainers">0</span>
+              <p>Total Trainers</p>
+            </div>
+          </div>
+          <div class="stat-card glass">
+            <span>📅</span>
+            <div>
+              <span id="activeSessions">0</span>
+              <p>Active Sessions</p>
+            </div>
+          </div>
+          <div class="stat-card glass">
+            <span>💰</span>
+            <div>
+              <span id="revenue">₹0</span>
+              <p>Est. Revenue</p>
+            </div>
+          </div>
+        </div>
+        <div class="admin-sections">
+          <div class="members-card section-container glass">
+            <div class="section-header">
+              <h2>Members</h2>
+              <button class="btn-primary" onclick="openAddMemberModal()">
+                + Add Member
+              </button>
+            </div>
+            <div id="adminMembersList" class="user-list"></div>
+          </div>
+          <div class="trainers-card section-container glass">
+            <div class="section-header">
+              <h2>Trainers</h2>
+              <button class="btn-primary" onclick="openAddTrainerModal()">
+                + Add Trainer
+              </button>
+            </div>
+            <div id="adminTrainersList" class="user-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workout Modal -->
+    <div id="workoutModal" class="modal">
+      <div class="modal-content glass">
+        <div class="modal-header">
+          <h2>Add Workout</h2>
+          <button class="modal-close">×</button>
+        </div>
+        <form id="workoutForm">
+          <div class="form-group">
+            <label for="exerciseName">Exercise</label>
+            <input type="text" id="exerciseName" required />
+          </div>
+          <div class="form-group">
+            <label for="workoutDate">Date</label>
+            <input type="date" id="workoutDate" required />
+          </div>
+          <div class="form-group">
+            <label for="duration">Duration (mins)</label>
+            <input type="number" id="duration" required min="1" />
+          </div>
+          <div class="form-group">
+            <label for="calories">Calories Burnt</label>
+            <input type="number" id="calories" min="0" />
+          </div>
+          <div class="form-group">
+            <label for="distance">Distance (km)</label>
+            <input type="number" id="distance" min="0" step="0.1" />
+          </div>
+          <div class="form-group">
+            <label for="progress">Progress Notes</label>
+            <textarea id="progress" rows="3"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary modal-cancel">
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary">Save Workout</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Session Modal -->
+    <div id="sessionModal" class="modal">
+      <div class="modal-content glass">
+        <div class="modal-header">
+          <h2>Book a Session</h2>
+          <button class="modal-close">×</button>
+        </div>
+        <div id="availableSessionsList" class="item-list"></div>
+      </div>
+    </div>
+
+    <!-- Add Member Modal -->
+    <div id="addMemberModal" class="modal">
+      <div class="modal-content glass">
+        <div class="modal-header">
+          <h2>Add New Member</h2>
+          <button class="modal-close">×</button>
+        </div>
+        <form id="addMemberForm">
+          <div class="form-group">
+            <label for="newMemberName">Name *</label>
+            <input type="text" id="newMemberName" required />
+          </div>
+          <div class="form-group">
+            <label for="newMemberEmail">Email *</label>
+            <input type="email" id="newMemberEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="newMemberPassword">Password *</label>
+            <input type="password" id="newMemberPassword" required />
+          </div>
+          <div class="form-group">
+            <label for="newMemberAge">Age *</label>
+            <input
+              type="number"
+              id="newMemberAge"
+              required
+              min="10"
+              max="100"
+            />
+          </div>
+          <div class="form-group">
+            <label for="newMemberPhone">Phone</label>
+            <input type="tel" id="newMemberPhone" />
+          </div>
+          <div class="form-group">
+            <label for="newMemberMembershipType">Membership Type *</label>
+            <select id="newMemberMembershipType" required>
+              <option value="1">Gold</option>
+              <option value="2">Silver</option>
+              <option value="3">Platinum</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="newMemberGym">Gym Location *</label>
+            <select id="newMemberGym" required>
+              <option value="1">Pune Downtown</option>
+              <option value="2">Mumbai Seaside</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary modal-cancel">
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary">Add Member</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add Trainer Modal -->
+    <div id="addTrainerModal" class="modal">
+      <div class="modal-content glass">
+        <div class="modal-header">
+          <h2>Add New Trainer</h2>
+          <button class="modal-close">×</button>
+        </div>
+        <form id="addTrainerForm">
+          <div class="form-group">
+            <label for="newTrainerName">Name *</label>
+            <input type="text" id="newTrainerName" required />
+          </div>
+          <div class="form-group">
+            <label for="newTrainerEmail">Email *</label>
+            <input type="email" id="newTrainerEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="newTrainerPassword">Password *</label>
+            <input type="password" id="newTrainerPassword" required />
+          </div>
+          <div class="form-group">
+            <label for="newTrainerSpecialization">Specialization *</label>
+            <input
+              type="text"
+              id="newTrainerSpecialization"
+              required
+              placeholder="e.g., Strength Training, Yoga"
+            />
+          </div>
+          <div class="form-group">
+            <label for="newTrainerGym">Gym Location *</label>
+            <select id="newTrainerGym" required>
+              <option value="1">Pune Downtown</option>
+              <option value="2">Mumbai Seaside</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary modal-cancel">
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary">Add Trainer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- AI Chatbot Modal -->
+    <div id="chatbotModal" class="modal">
+      <div class="modal-content glass chatbot-modal">
+        <div class="modal-header">
+          <h2>🤖 AI Fitness Assistant</h2>
+          <button class="modal-close">×</button>
+        </div>
+        <div class="chatbot-container">
+          <div id="chatMessages" class="chat-messages"></div>
+          <div class="chat-input-container">
+            <input
+              type="text"
+              id="chatInput"
+              placeholder="Ask me about your fitness journey..."
+            />
+            <button id="sendChatBtn" class="btn-primary">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+  </body>
+</html>
