@@ -5,18 +5,18 @@
 **Academic Year:** 2024-2025  
 **Institution:** MIT-WPU, School of Computer Science and Engineering  
 **Course:** Database Management Systems (DBMS)  
-**Review:** Review 2 Submission
+**Review:** Final Review Submission
 
 ---
 
 ## Team Members
 
-| Name | Roll Number |
-|------|-------------|
-| Sujal Sokande | 1272250913 |
-| Kavya Rane | 1262241582 |
-| Megha Mahesh | 1262241643 |
-| Raya Gangopadhyay | 1262241686 |
+| Name               |
+|--------------------|
+| Sujal Sokande      |
+| Kavya Rane         |
+| Megha Mahesh       |
+| Raya Gangopadhyay  |
 
 ---
 
